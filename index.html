@@ -173,7 +173,7 @@
         </div>
         <div class="chart-row">
             <div class="chart-card"><h3>Monthly activity</h3><div class="chart-container"><canvas id="rhiTimelineChart"></canvas></div></div>
-            <div class="chart-card"><h3>Engagement types</h3><div class="chart-container"><canvas id="rhiTypeChart"></canvas></div></div>
+            <div class="chart-card"><h3>Engagement types</h3><div id="rhiTypeTreemapDiv" style="width:100%;min-height:260px;"></div></div>
         </div>
     </div>
 
@@ -402,7 +402,18 @@ const SEASONAL_AVG = SEASONAL_2024.map((v,i) => { const b = SEASONAL_2025[i]; if
 })();
 (function() {
     const sorted = Object.entries(RHI_TYPES).sort((a,b)=>b[1]-a[1]);
-    new Chart(document.getElementById('rhiTypeChart'), { type:'doughnut', data:{labels:sorted.map(e=>e[0]),datasets:[{data:sorted.map(e=>e[1]),backgroundColor:['#0e8aaf','#30d6ff','#7ae3ff','#b0efff','#d0f5ff'],borderWidth:2,borderColor:'#fff'}]}, options:{responsive:true,maintainAspectRatio:false,cutout:'50%',plugins:{legend:{position:'right',labels:{font:{size:11}}}}} });
+    const total = sorted.reduce((s,e)=>s+e[1],0);
+    const container = document.getElementById('rhiTypeTreemapDiv');
+    const w = container.clientWidth || 440; const h = 260;
+    const rhiColors = ['#0e8aaf','#30d6ff','#7ae3ff','#b0efff','#d0f5ff'];
+    const root = d3.hierarchy({children:sorted.map(([name,val],i)=>({name,value:val,color:rhiColors[i%rhiColors.length]}))}).sum(d=>d.value);
+    d3.treemap().size([w,h]).padding(3).round(true)(root);
+    const svg = d3.select('#rhiTypeTreemapDiv').append('svg').attr('width',w).attr('height',h).attr('viewBox','0 0 '+w+' '+h);
+    const cell = svg.selectAll('g').data(root.leaves()).enter().append('g').attr('transform',d=>'translate('+d.x0+','+d.y0+')');
+    cell.append('rect').attr('width',d=>d.x1-d.x0).attr('height',d=>d.y1-d.y0).attr('fill',d=>d.data.color).attr('rx',4).attr('ry',4);
+    cell.append('text').attr('x',6).attr('y',18).text(d=>d.data.name).style('font-size','12px').style('font-weight','600').style('fill',d=>{const c=d.data.color;return(c==='#0e8aaf')?'#fff':'#1a1a2e';});
+    cell.append('text').attr('x',6).attr('y',34).text(d=>d.data.value+' ('+Math.round(d.data.value/total*100)+'%)').style('font-size','11px').style('fill',d=>{const c=d.data.color;return(c==='#0e8aaf')?'#ddd':'#555';});
+    cell.append('title').text(d=>d.data.name+': '+d.data.value+' ('+Math.round(d.data.value/total*100)+'%)');
 })();
 
 // ========== PARTNER CHARTS ==========
@@ -513,48 +524,77 @@ const CONTINENT_MAP = {"United Kingdom":"Europe","The Netherlands":"Europe","Aus
     const sel = document.getElementById('countrySelect');
     function populateCountries(filter) {
         const prev = sel.value;
-        sel.innerHTML = '<option value="">Choose a country...</option>';
+        sel.innerHTML = '<option value="">All countries'+(filter?' in '+filter:'')+'...</option>';
         const filtered = filter ? allCountries.filter(c => (CONTINENT_MAP[c]||'Other') === filter) : allCountries;
         filtered.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c+' ('+countryMap[c].length+')'; sel.appendChild(o); });
         if (filtered.includes(prev)) sel.value = prev;
     }
     populateCountries('');
 
-    contSel.addEventListener('change', () => {
-        populateCountries(contSel.value);
-        sel.dispatchEvent(new Event('change'));
-    });
-
-    sel.addEventListener('change', () => {
-        const country = sel.value;
+    function renderProfile(engs, title, avatarText, avatarColor) {
         const div = document.getElementById('countryProfile');
-        if (!country) { div.innerHTML='<div class="empty-state">Select a country above.</div>'; return; }
-        const engs = countryMap[country];
+        if (!engs || engs.length === 0) { div.innerHTML='<div class="empty-state">No engagements found.</div>'; return; }
         const staffSet = new Set();
         engs.forEach(e => e.s.split('\n').forEach(n => { if(n.trim()) staffSet.add(n.trim()); }));
         const staffList = [...staffSet].sort();
         const types = {};
         engs.forEach(e => { if(e.t) types[e.t]=(types[e.t]||0)+1; });
+        const countries = [...new Set(engs.map(e=>e.c).filter(c=>c))].sort();
 
-        let html = '<div class="profile-header"><div class="profile-avatar" style="background:var(--ucl-heritage-blue);">'+country.slice(0,2).toUpperCase()+'</div><div><div class="profile-name">'+country+'</div><div class="profile-sub">'+engs.length+' engagements by '+staffList.length+' staff</div></div></div>';
+        let html = '<div class="profile-header"><div class="profile-avatar" style="background:'+(avatarColor||'var(--ucl-heritage-blue)')+';">'+avatarText+'</div><div><div class="profile-name">'+title+'</div><div class="profile-sub">'+engs.length+' engagements by '+staffList.length+' staff across '+countries.length+' countries</div></div></div>';
         html += '<div class="profile-stats">';
         html += '<div class="profile-stat-card"><div class="stat-val">'+engs.length+'</div><div class="stat-label">Engagements</div></div>';
         html += '<div class="profile-stat-card"><div class="stat-val">'+staffList.length+'</div><div class="stat-label">Staff involved</div></div>';
+        html += '<div class="profile-stat-card"><div class="stat-val">'+countries.length+'</div><div class="stat-label">Countries</div></div>';
+        html += '<div class="profile-stat-card"><div class="stat-val">'+Object.keys(types).length+'</div><div class="stat-label">Activity types</div></div>';
         html += '</div>';
-        html += '<div style="margin-bottom:16px;"><strong style="font-size:13px;">Staff who have engaged here:</strong> ';
+        html += '<div style="margin-bottom:16px;"><strong style="font-size:13px;">Staff who have engaged:</strong> ';
         staffList.forEach(s => { html += '<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--ucl-pale-purple);color:var(--ucl-dark-purple);margin:2px 3px;">'+s+'</span>'; });
         html += '</div>';
+        if (countries.length > 1) {
+            const countryCounts = {};
+            engs.forEach(e => { if(e.c) countryCounts[e.c]=(countryCounts[e.c]||0)+1; });
+            const sortedC = Object.entries(countryCounts).sort((a,b)=>b[1]-a[1]);
+            html += '<div style="margin-bottom:16px;"><strong style="font-size:13px;">Countries:</strong> ';
+            sortedC.forEach(([c,n]) => { html += '<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:500;background:#e8f8ff;color:#0e6a8a;margin:2px 3px;">'+c+' ('+n+')</span>'; });
+            html += '</div>';
+        }
         html += '<ul class="engagement-list">';
         engs.sort((a,b)=>(b.y*100+b.m)-(a.y*100+a.m)).forEach(e => {
             const names = e.s.split('\n').map(n=>n.trim()).filter(n=>n).join(', ');
             html += '<li><span class="eng-date">'+e.d+'</span><span class="eng-type">'+e.t+'</span>';
             html += '<div class="eng-summary">'+e.u+'</div>';
-            html += '<div class="eng-meta">'+names+(e.p?' | '+e.p:'')+'</div></li>';
+            html += '<div class="eng-meta">'+names+(e.p?' | '+e.p:'')+(e.c?' | '+e.c:'')+'</div></li>';
         });
         html += '</ul>';
         div.innerHTML = html;
+    }
+
+    contSel.addEventListener('change', () => {
+        const continent = contSel.value;
+        populateCountries(continent);
+        sel.value = '';
+        if (continent) {
+            // Show continent-level profile immediately
+            const contCountries = allCountries.filter(c => (CONTINENT_MAP[c]||'Other') === continent);
+            const contEngs = contCountries.flatMap(c => countryMap[c]);
+            renderProfile(contEngs, continent, continent.slice(0,2).toUpperCase(), 'var(--ucl-dark-purple)');
+        } else {
+            document.getElementById('countryProfile').innerHTML = '<div class="empty-state">Select a continent or country above.</div>';
+        }
     });
-    document.getElementById('countryProfile').innerHTML = '<div class="empty-state">Select a country above.</div>';
+
+    sel.addEventListener('change', () => {
+        const country = sel.value;
+        if (!country) {
+            // If a continent is selected, show continent profile; otherwise show empty
+            if (contSel.value) { contSel.dispatchEvent(new Event('change')); }
+            else { document.getElementById('countryProfile').innerHTML='<div class="empty-state">Select a continent or country above.</div>'; }
+            return;
+        }
+        renderProfile(countryMap[country], country, country.slice(0,2).toUpperCase(), 'var(--ucl-heritage-blue)');
+    });
+    document.getElementById('countryProfile').innerHTML = '<div class="empty-state">Select a continent or country above.</div>';
 })();
 
 // ========== EXPLORER: TOPIC ==========
