@@ -312,8 +312,6 @@ const PEOPLE_2026 = {"PhD":9,"Research Fellow":7,"Lecturer":8,"Associate Profess
 
 const SEASONAL_AVG = SEASONAL_2024.map((v,i) => { const b = SEASONAL_2025[i]; if (v===0 && i===0) return b; if (v===0) return b; return (v+b)/2; });
 
-const INE_TYPES = {"Briefing": 15, "Presentation": 14, "Written submission": 10, "Event organised": 7, "Workshop/Roundtable": 5, "Advisory Role (Consultant)": 5, "Publication": 4, "Advisory/Governance Role (Appointed)": 2, "Event participation": 1};
-
 // ========== CHART: MONTHLY TREND ==========
 (function() {
     const labels = Object.keys(MONTHLY);
