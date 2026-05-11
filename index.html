@@ -98,15 +98,15 @@
 <div class="dashboard">
     <div class="header">
         <h1>STEaPP Policy Engagement</h1>
-        <div class="subtitle">Director's strategic overview: what the department's policy engagement looks like, who is doing it, how it is changing, and what is driving it. Data from the PE Master List, February 2024 to March 2026.</div>
-        <div class="meta">Prepared for DoP presentation, April 2026 | UCL Department of Science, Technology, Engineering and Public Policy | 511 engagements analysed</div>
+        <div class="subtitle">This dashboard draws on monthly policy engagement returns and news items identified by the STEaPP Policy Adviser. The data is necessarily incomplete and partial: it should not be used to infer total policy engagement activity by any individual or on any topic. Its purpose is to explore patterns, surface questions, and inform strategic conversations about how the department engages with policy.</div>
+        <div class="meta">UCL Department of Science, Technology, Engineering and Public Policy | 511 engagements, February 2024 to March 2026 | Feedback: <a href="mailto:ine.steenmans@ucl.ac.uk" style="color:var(--ucl-mid-purple)">ine.steenmans@ucl.ac.uk</a> &amp; <a href="mailto:r.vanvliet@ucl.ac.uk" style="color:var(--ucl-mid-purple)">r.vanvliet@ucl.ac.uk</a></div>
     </div>
 
     <div class="nav-tabs">
         <div class="nav-tab active" data-tab="overview">Overview</div>
         <div class="nav-tab" data-tab="types">Engagement Types</div>
         <div class="nav-tab" data-tab="people">Who Is Engaging</div>
-        <div class="nav-tab" data-tab="rhi">Policy Adviser Impact</div>
+        <div class="nav-tab" data-tab="rhi">STEaPP Policy Adviser</div>
         <div class="nav-tab" data-tab="partners">Partners &amp; Longevity</div>
         <div class="nav-tab" data-tab="geography">Geography</div>
         <div class="nav-tab" data-tab="themes">Themes &amp; SDGs</div>
@@ -114,6 +114,7 @@
         <div class="nav-tab" data-tab="explore" style="border-left:3px solid var(--ucl-bright-purple);">Explore: Staff</div>
         <div class="nav-tab" data-tab="explore-country">Explore: Country</div>
         <div class="nav-tab" data-tab="explore-topic">Explore: Topic</div>
+        <div class="nav-tab" data-tab="explore-partner">Explore: Partner</div>
     </div>
 
     <!-- ============ TAB 1: OVERVIEW ============ -->
@@ -141,7 +142,7 @@
         <h2 class="section-heading">Engagement Type Analysis<span class="note">How the portfolio of engagement types is evolving</span></h2>
         <div class="chart-row">
             <div class="chart-card"><h3>Engagement types: year-on-year</h3><div class="chart-sub">Comparison across 2024, 2025, and 2026 Q1. Note the doubling of briefings.</div><div class="chart-container tall"><canvas id="typeCompareChart"></canvas></div></div>
-            <div class="chart-card"><h3>2025 engagement type composition</h3><div class="chart-sub">Share of each engagement type in the most recent full year</div><div class="chart-container tall"><canvas id="typeDoughnut"></canvas></div></div>
+            <div class="chart-card"><h3>2025 engagement type composition</h3><div class="chart-sub">Share of each engagement type in the most recent full year. Area proportional to count.</div><div id="typeTreemapDiv" style="width:100%;height:360px;"></div></div>
         </div>
         <div class="insight-row">
             <div class="insight-card"><div class="insight-stat">72</div><div class="insight-title">Briefings in 2025</div><div class="insight-text">Up from 34 in 2024 (+112%). Policy briefings are now the dominant engagement type, overtaking presentations.</div></div>
@@ -152,7 +153,7 @@
 
     <!-- ============ TAB 3: PEOPLE ============ -->
     <div class="tab-panel" id="tab-people">
-        <h2 class="section-heading">Who Is Engaging?<span class="note">Broadening participation across career stages and building collaborative practice</span></h2>
+        <h2 class="section-heading">Who Is Engaging?<span class="note">Broadening participation across career stages and building collaborative practice. Note: counts are not normalised by staff numbers (e.g. there are more PhD researchers than Research Fellows in the department).</span></h2>
         <div class="chart-row full"><div class="chart-card"><h3>Unique individuals engaged by career stage</h3><div class="chart-sub">Distinct people engaging with policy each year, by grade.</div><div class="chart-container"><canvas id="uniquePeopleGradeChart"></canvas></div></div></div>
         <div class="chart-row">
             <div class="chart-card"><h3>Engagement volume by career stage</h3><div class="chart-sub">Total engagements involving each grade. PhD participation more than doubled from 2024 to 2025.</div><div class="chart-container"><canvas id="gradeChart"></canvas></div></div>
@@ -164,7 +165,7 @@
 
     <!-- ============ TAB 4: RHI ============ -->
     <div class="tab-panel" id="tab-rhi">
-        <h2 class="section-heading">Impact of the Departmental Policy Adviser<span class="note">Rhiannon Van Vliet, appointed October 2024</span></h2>
+        <h2 class="section-heading">STEaPP Policy Adviser<span class="note">Rhiannon Van Vliet, appointed October 2024</span></h2>
         <div class="kpi-row">
             <div class="kpi-card" style="border-left-color:var(--ucl-heritage-blue)"><div class="kpi-label">Named Engagements</div><div class="kpi-value">24</div><div class="kpi-sub">2 in 2024, 16 in 2025, 6 in 2026</div></div>
             <div class="kpi-card" style="border-left-color:var(--ucl-heritage-blue)"><div class="kpi-label">Written Submissions</div><div class="kpi-value">11</div><div class="kpi-sub">Parliamentary and policy</div></div>
@@ -229,6 +230,8 @@
     <div class="tab-panel" id="tab-explore-country">
         <h2 class="section-heading">Explore: Country<span class="note">Select a country to see who has engaged there and what they did</span></h2>
         <div class="explorer-controls">
+            <label for="continentSelect">Continent:</label>
+            <select id="continentSelect"><option value="">All continents</option></select>
             <label for="countrySelect">Country:</label>
             <select id="countrySelect"><option value="">Choose a country...</option></select>
         </div>
@@ -243,6 +246,16 @@
             <select id="topicSelect"><option value="">Choose a topic...</option></select>
         </div>
         <div id="topicProfile"></div>
+    </div>
+
+    <!-- ============ TAB 12: EXPLORE PARTNER ============ -->
+    <div class="tab-panel" id="tab-explore-partner">
+        <h2 class="section-heading">Explore: Partner<span class="note">Select a partner organisation to see engagement details</span></h2>
+        <div class="explorer-controls">
+            <label for="partnerSelect">Partner organisation:</label>
+            <select id="partnerSelect"><option value="">Choose a partner...</option></select>
+        </div>
+        <div id="partnerProfile"></div>
     </div>
 
     <div class="footer">UCL STEaPP | Director of Policy Engagement | Data current to March 2026</div>
@@ -344,7 +357,20 @@ const SEASONAL_AVG = SEASONAL_2024.map((v,i) => { const b = SEASONAL_2025[i]; if
 })();
 (function() {
     const sorted = Object.entries(TYPE_2025).sort((a,b)=>b[1]-a[1]);
-    new Chart(document.getElementById('typeDoughnut'), { type:'doughnut', data:{labels:sorted.map(e=>e[0]),datasets:[{data:sorted.map(e=>e[1]),backgroundColor:PALETTE.slice(0,sorted.length),borderWidth:2,borderColor:'#fff'}]}, options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:11},padding:10}},tooltip:{callbacks:{label:(item)=>{const t=item.dataset.data.reduce((a,b)=>a+b,0);return item.label+': '+item.raw+' ('+((item.raw/t)*100).toFixed(1)+'%)'}}}}} });
+    const total = sorted.reduce((s,e)=>s+e[1],0);
+    const container = document.getElementById('typeTreemapDiv');
+    if (!container) return;
+    const width = container.clientWidth || 500;
+    const height = 360;
+    const root = d3.hierarchy({children: sorted.map(([name,value])=>({name,value}))}).sum(d=>d.value);
+    d3.treemap().size([width, height]).padding(3).round(true)(root);
+    const colors = ['#993bff','#ba82ff','#361a54','#ddbdff','#30d6ff','#6b3fa0','#eedeff','#7a6b8a','#4a2d7a','#c4a0ff'];
+    const svg = d3.select(container).append('svg').attr('width',width).attr('height',height);
+    const cell = svg.selectAll('g').data(root.leaves()).join('g').attr('transform',d=>'translate('+d.x0+','+d.y0+')');
+    cell.append('rect').attr('width',d=>d.x1-d.x0).attr('height',d=>d.y1-d.y0).attr('fill',(d,i)=>colors[i%colors.length]).attr('rx',4).style('cursor','default');
+    cell.append('text').attr('x',6).attr('y',18).text(d=>d.data.name).attr('font-size','12px').attr('font-weight','600').attr('fill','#fff').each(function(d){if(d.x1-d.x0<80)d3.select(this).attr('font-size','9px')});
+    cell.append('text').attr('x',6).attr('y',34).text(d=>d.data.value+' ('+((d.data.value/total)*100).toFixed(0)+'%)').attr('font-size','11px').attr('fill','rgba(255,255,255,0.85)').each(function(d){if(d.x1-d.x0<60)d3.select(this).remove()});
+    cell.append('title').text(d=>d.data.name+': '+d.data.value+' ('+((d.data.value/total)*100).toFixed(1)+'%)');
 })();
 
 // ========== PEOPLE CHARTS ==========
@@ -447,7 +473,7 @@ setTimeout(()=>buildChoropleth('worldMapDiv',MAP_COUNTRIES,4),300);
         engs.forEach(e => { (e.th||[]).forEach(th => { themes[th]=(themes[th]||0)+1; }); });
         const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase();
 
-        let html = '<div class="profile-header"><div class="profile-avatar">'+initials+'</div><div><div class="profile-name">'+name+'</div><div class="profile-sub">'+engs.length+' engagements across '+countries.length+' countries</div></div></div>';
+        let html = '<div class="profile-header"><div class="profile-avatar">'+initials+'</div><div><div class="profile-name">'+name+'</div><div class="profile-sub">Data based on monthly reports; additions can be shared with Rhi by email.</div></div></div>';
         html += '<div class="profile-stats">';
         html += '<div class="profile-stat-card"><div class="stat-val">'+engs.length+'</div><div class="stat-label">Engagements</div></div>';
         html += '<div class="profile-stat-card"><div class="stat-val">'+countries.length+'</div><div class="stat-label">Countries</div></div>';
@@ -474,12 +500,30 @@ setTimeout(()=>buildChoropleth('worldMapDiv',MAP_COUNTRIES,4),300);
 })();
 
 // ========== EXPLORER: COUNTRY ==========
+const CONTINENT_MAP = {"United Kingdom":"Europe","The Netherlands":"Europe","Australia":"Oceania","United Arab Emirates":"Asia","United States of America":"North America","Spain":"Europe","Denmark":"Europe","Kenya":"Africa","Italy":"Europe","France":"Europe","Japan":"Asia","South Africa":"Africa","Brazil":"South America","Rwanda":"Africa","Canada":"North America","Pakistan":"Asia","Germany":"Europe","Finland":"Europe","India":"Asia","Austria":"Europe","China":"Asia","Armenia":"Europe","Belgium":"Europe","Turkey":"Europe","Taiwan":"Asia","Portugal":"Europe","Indonesia":"Asia","Switzerland":"Europe","Azerbaijan":"Asia","Malawi":"Africa","Zimbabwe":"Africa","Norway":"Europe","Saudi Arabia":"Asia","Mexico":"North America","Morocco":"Africa","Senegal":"Africa","New Zealand":"Oceania","Ukraine":"Europe","Egypt":"Africa","Romania":"Europe","Chile":"South America","Nepal":"Asia","Korea":"Asia","Hungary":"Europe","Ireland":"Europe","Singapore":"Asia","Nigeria":"Africa","Malaysia":"Asia","Tanzania":"Africa","Poland":"Europe","Uruguay":"South America","Thailand":"Asia","Ethiopia":"Africa","Burkina Faso":"Africa","Uganda":"Africa","Ghana":"Africa","Zambia":"Africa","Panama":"North America","Democratic Republic of Congo":"Africa","Bangladesh":"Asia","Botswana":"Africa"};
 (function() {
     const countryMap = {};
     RAW.forEach(r => { if(r.c) { if(!countryMap[r.c]) countryMap[r.c]=[]; countryMap[r.c].push(r); } });
-    const countries = Object.keys(countryMap).sort();
+    const allCountries = Object.keys(countryMap).sort();
+    const continents = [...new Set(allCountries.map(c => CONTINENT_MAP[c] || 'Other'))].sort();
+
+    const contSel = document.getElementById('continentSelect');
+    continents.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; contSel.appendChild(o); });
+
     const sel = document.getElementById('countrySelect');
-    countries.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c+' ('+countryMap[c].length+')'; sel.appendChild(o); });
+    function populateCountries(filter) {
+        const prev = sel.value;
+        sel.innerHTML = '<option value="">Choose a country...</option>';
+        const filtered = filter ? allCountries.filter(c => (CONTINENT_MAP[c]||'Other') === filter) : allCountries;
+        filtered.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c+' ('+countryMap[c].length+')'; sel.appendChild(o); });
+        if (filtered.includes(prev)) sel.value = prev;
+    }
+    populateCountries('');
+
+    contSel.addEventListener('change', () => {
+        populateCountries(contSel.value);
+        sel.dispatchEvent(new Event('change'));
+    });
 
     sel.addEventListener('change', () => {
         const country = sel.value;
@@ -492,13 +536,13 @@ setTimeout(()=>buildChoropleth('worldMapDiv',MAP_COUNTRIES,4),300);
         const types = {};
         engs.forEach(e => { if(e.t) types[e.t]=(types[e.t]||0)+1; });
 
-        let html = '<div class="profile-header"><div class="profile-avatar" style="background:var(--ucl-heritage-blue);">'+country.slice(0,2).toUpperCase()+'</div><div><div class="profile-name">'+country+'</div><div class="profile-sub">'+engs.length+' engagements by '+staffList.length+' staff members</div></div></div>';
+        let html = '<div class="profile-header"><div class="profile-avatar" style="background:var(--ucl-heritage-blue);">'+country.slice(0,2).toUpperCase()+'</div><div><div class="profile-name">'+country+'</div><div class="profile-sub">'+engs.length+' engagements by '+staffList.length+' staff</div></div></div>';
         html += '<div class="profile-stats">';
         html += '<div class="profile-stat-card"><div class="stat-val">'+engs.length+'</div><div class="stat-label">Engagements</div></div>';
         html += '<div class="profile-stat-card"><div class="stat-val">'+staffList.length+'</div><div class="stat-label">Staff involved</div></div>';
         html += '</div>';
         html += '<div style="margin-bottom:16px;"><strong style="font-size:13px;">Staff who have engaged here:</strong> ';
-        staffList.forEach(s => { html += '<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--ucl-pale-purple);color:var(--ucl-dark-purple);margin:2px 3px;cursor:pointer;" onclick="document.getElementById(\'staffSelect\').value=\''+s.replace(/'/g,"\\'")+'\'">'+s+'</span>'; });
+        staffList.forEach(s => { html += '<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--ucl-pale-purple);color:var(--ucl-dark-purple);margin:2px 3px;">'+s+'</span>'; });
         html += '</div>';
         html += '<ul class="engagement-list">';
         engs.sort((a,b)=>(b.y*100+b.m)-(a.y*100+a.m)).forEach(e => {
@@ -554,6 +598,64 @@ setTimeout(()=>buildChoropleth('worldMapDiv',MAP_COUNTRIES,4),300);
         div.innerHTML = html;
     });
     document.getElementById('topicProfile').innerHTML = '<div class="empty-state">Select a topic above.</div>';
+})();
+
+// ========== EXPLORER: PARTNER ==========
+(function() {
+    const partnerMap = {};
+    RAW.forEach(r => {
+        if (r.p && r.p.trim()) {
+            const partner = r.p.trim();
+            if (!partnerMap[partner]) partnerMap[partner] = [];
+            partnerMap[partner].push(r);
+        }
+    });
+    const partners = Object.keys(partnerMap).sort();
+    const sel = document.getElementById('partnerSelect');
+    partners.forEach(p => { const o=document.createElement('option'); o.value=p; o.textContent=p+' ('+partnerMap[p].length+')'; sel.appendChild(o); });
+
+    sel.addEventListener('change', () => {
+        const partner = sel.value;
+        const div = document.getElementById('partnerProfile');
+        if (!partner) { div.innerHTML='<div class="empty-state">Select a partner organisation above.</div>'; return; }
+        const engs = partnerMap[partner];
+        const staffSet = new Set();
+        engs.forEach(e => e.s.split('\n').forEach(n => { if(n.trim()) staffSet.add(n.trim()); }));
+        const staffList = [...staffSet].sort();
+        const types = {};
+        engs.forEach(e => { if(e.t) types[e.t]=(types[e.t]||0)+1; });
+        const countries = [...new Set(engs.map(e=>e.c).filter(c=>c))].sort();
+        const initials = partner.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+        let html = '<div class="profile-header"><div class="profile-avatar" style="background:var(--ucl-dark-purple);">'+initials+'</div><div><div class="profile-name">'+partner+'</div><div class="profile-sub">'+engs.length+' engagements with this partner</div></div></div>';
+        html += '<div class="profile-stats">';
+        html += '<div class="profile-stat-card"><div class="stat-val">'+engs.length+'</div><div class="stat-label">Engagements</div></div>';
+        html += '<div class="profile-stat-card"><div class="stat-val">'+staffList.length+'</div><div class="stat-label">Staff involved</div></div>';
+        html += '<div class="profile-stat-card"><div class="stat-val">'+Object.keys(types).length+'</div><div class="stat-label">Types</div></div>';
+        html += '<div class="profile-stat-card"><div class="stat-val">'+countries.length+'</div><div class="stat-label">Countries</div></div>';
+        html += '</div>';
+
+        html += '<div style="margin-bottom:16px;"><strong style="font-size:13px;">Staff involved:</strong> ';
+        staffList.forEach(s => { html += '<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--ucl-pale-purple);color:var(--ucl-dark-purple);margin:2px 3px;">'+s+'</span>'; });
+        html += '</div>';
+
+        if (countries.length > 0) {
+            html += '<div style="margin-bottom:16px;"><strong style="font-size:13px;">Countries:</strong> ';
+            countries.forEach(c => { html += '<span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#e8f8fd;color:#0e8aaf;margin:2px 3px;">'+c+'</span>'; });
+            html += '</div>';
+        }
+
+        html += '<ul class="engagement-list">';
+        engs.sort((a,b)=>(b.y*100+b.m)-(a.y*100+a.m)).forEach(e => {
+            const names = e.s.split('\n').map(n=>n.trim()).filter(n=>n).join(', ');
+            html += '<li><span class="eng-date">'+e.d+'</span><span class="eng-type">'+e.t+'</span>';
+            html += '<div class="eng-summary">'+e.u+'</div>';
+            html += '<div class="eng-meta">'+names+(e.c?' | '+e.c:'')+'</div></li>';
+        });
+        html += '</ul>';
+        div.innerHTML = html;
+    });
+    document.getElementById('partnerProfile').innerHTML = '<div class="empty-state">Select a partner organisation above.</div>';
 })();
 
 </script>
