@@ -317,7 +317,7 @@ const RHI_TYPES = {"Written submission": 11, "Briefing": 5, "Workshop/Roundtable
 const INE_TYPES = {"Briefing": 15, "Presentation": 14, "Written submission": 10, "Event organised": 7, "Workshop/Roundtable": 5, "Advisory Role (Consultant)": 5, "Publication": 4, "Advisory/Governance Role (Appointed)": 2, "Event participation": 1};
 const SEASONAL_2024 = [0, 31, 23, 24, 12, 16, 15, 11, 21, 28, 21, 12];
 const SEASONAL_2025 = [24, 27, 28, 11, 24, 21, 24, 6, 25, 18, 27, 5];
-const MAP_COUNTRIES = [];
+const MAP_COUNTRIES = (function(){const m={};RAW.forEach(r=>{if(r.c){m[r.c]=(m[r.c]||0)+1;}});return Object.entries(m).sort((a,b)=>b[1]-a[1]);})();
 
 const PEOPLE_2024 = {"Postgraduate":1,"PhD":16,"Research Fellow":13,"Lecturer":9,"Associate Professor":19,"Professor":16};
 const PEOPLE_2025 = {"Postgraduate":6,"PhD":44,"Research Fellow":30,"Lecturer":19,"Associate Professor":23,"Professor":36};
